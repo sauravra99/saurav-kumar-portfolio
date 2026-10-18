@@ -1,0 +1,11 @@
+{
+  "name": "saurav-kumar-aem-portfolio",
+  "version": "1.0.0",
+  "description": "Portfolio website for Saurav Kumar - AEM Developer (AEMaaCS, DAM & AEM 6.5)",
+  "scripts": {
+    "start": "npx serve .",
+    "py-serve": "python3 -m http.server 8080"
+  },
+  "author": "Saurav Kumar <sauravraj32424@gmail.com>",
+  "license": "MIT"
+}
