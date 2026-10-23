@@ -1,42 +1,41 @@
-# Saurav Kumar — AEM Developer Portfolio Website
+# Saurav Kumar — AEM Developer Portfolio
 
-A modern, responsive, interactive portfolio website built for **Saurav Kumar** (*AEM Developer | AEM DAM & AEM Assets (AEMaaCS)*).
+A responsive portfolio focused on selected work, career experience, and AEM expertise. Built with semantic HTML, CSS, and vanilla JavaScript; no build step or external runtime dependencies.
 
-## Project Folder Structure
+## Page structure
 
-```
-saurav-kumar-portfolio/
-├── index.html                           # Main portfolio entry point
-├── css/
-│   └── styles.css                       # Custom glassmorphism, theme variables & print styles
-├── js/
-│   ├── data.js                          # Structured resume data, AEM code blueprints & Oak query scenarios
-│   └── app.js                           # UI state, filters, Chart.js graph, Oak Index simulator & modals
-├── assets/
-│   ├── hero-architecture.jpg            # 3D isometric AEM cloud & DAM pipeline visual
-│   ├── developer-emblem.jpg             # Developer emblem badge
-│   └── Saurav_Kumar_AEM_Dev_Resume.pdf  # Original attached resume PDF
-├── package.json                         # Optional static server scripts
-└── README.md                            # Setup and deployment guide
-```
+- **Introduction:** a short profile, architecture illustration, and career summary.
+- **Selected work:** four expandable project rows with challenges, approaches, contributions, and example code.
+- **Oak demo:** an optional expandable query simulator. All timings and plans are illustrative, not production benchmarks.
+- **Experience:** three concise role summaries with expandable full responsibilities.
+- **Expertise:** five grouped skill rows and an optional selector retaining all 13 technical examples.
+- **Background:** education, awards, and languages without individual cards.
+- **Contact:** direct email, phone, LinkedIn, and email copying.
 
-## Key Features
+The header links directly to the original resume PDF. Light and dark themes persist locally. The mobile navigation and native disclosure controls support keyboard use, with visible focus indicators and reduced-motion support.
 
-1. **Hero & Executive Summary**: Highlights 5+ years of AEM expertise (1+ year AEMaaCS at Capgemini, 4+ years AEM 6.5 On-Premise at Aventior Digital & Wipro Limited).
-2. **Interactive Technical Skills & Code Inspector**: Filter skills across *AEM Platforms*, *AEM & Backend Stack*, *Front-End*, *Build/Tools*, and *Analytics (GA4/GTM)*, and inspect real-world implementation snippets.
-3. **Interactive Career Timeline**: Filterable by environment (`All`, `AEMaaCS`, `AEM 6.5`) and searchable by keyword.
-4. **AEM Architectural Blueprints**: Inspect production-style code blueprints (`DamAssetLifecycleProcess.java`, `_oak_index/damAssetLucene-10-custom-2/.content.xml`, `EnterpriseFeatureCardModel.java`, and `analytics-datalayer-bridge.js`).
-5. **JCR Query & Oak Index Optimization Simulator**: Compare *Unindexed Traversal*, *Property Index*, and *AEMaaCS Custom Lucene Index* query plans across real enterprise DAM & Sites queries.
-6. **Dark / Light Theme & Printable CV Modal**: Built-in theme switcher and printable resume view.
+The previous skill chart, repeated summary cards, experience filters, resume modal, and outreach composer have been replaced by simpler sections and direct actions.
 
-## Running Locally
+## Files
 
-Simply open `index.html` in any modern browser, or serve the folder via Python/Node:
+- [index.html](./index.html): page structure and navigation.
+- [css/styles.css](./css/styles.css): responsive layout, themes, and print styles.
+- [js/app.js](./js/app.js): data rendering, theme, mobile menu, code copying, and query demo.
+- [js/data.js](./js/data.js): original profile, career, skill, blueprint, and demo data.
+- [assets/](./assets/): existing images and original resume PDF.
+
+## Preview
+
+Open [index.html](./index.html) directly in a modern browser. No installation is required.
+
+Alternatively, with Python 3 installed:
 
 ```bash
-# Using Python 3
 python3 -m http.server 8080
-
-# Or using npx serve
-npx serve .
 ```
+
+Then visit http://localhost:8080. Clipboard access depends on browser permissions and secure-context support; if unavailable, the page prompts visitors to copy the visible text manually.
+
+## Editing content
+
+Update career details, technical examples, education, and awards in [js/data.js](./js/data.js). Short project titles and role summaries live in [js/app.js](./js/app.js); introductory text and contact links live in [index.html](./index.html).
