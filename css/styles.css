@@ -9,3 +9,32 @@
 /* Allow code and long technical labels to shrink within grid tracks. */
 .hero>*,.split-section>*,.credentials>*,.project-columns>*,.lab-controls>*,.skill-row>*{min-width:0}
 .project-content,.lab-content,#skill-detail{min-width:0;overflow-wrap:anywhere}
+
+/* A single featured app, integrated into the selected-work section. */
+.featured-app {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 40px;
+  padding: 30px 0 36px;
+  border-top: 1px solid var(--line);
+}
+.featured-app .eyebrow { margin-bottom: 12px; }
+.featured-app h3 { font-size: 28px; letter-spacing: -.7px; }
+.featured-app h3 span { display: block; margin-top: 7px; font-size: 14px; letter-spacing: 0; color: var(--accent); font-weight: 500; }
+.featured-app p:not(.eyebrow) { max-width: 570px; font-size: 13px; margin-top: 15px; }
+.featured-app .app-stack { font-size: 11px !important; }
+.app-launch .button { display: inline-block; }
+.app-launch p { font-size: 11px !important; }
+@media (max-width: 700px) {
+  .featured-app { grid-template-columns: 1fr; gap: 22px; }
+  .app-launch { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; }
+  .app-launch p { margin: 0 !important; }
+}
+.app-setup { grid-column: 1 / -1; min-width: 0; border-top: 1px solid var(--line); padding-top: 24px; scroll-margin-top: 100px; }
+.app-setup h4 { font-size: 16px; font-weight: 600; }
+.app-setup ol { padding-left: 22px; color: var(--muted); font-size: 13px; max-width: 760px; }
+.app-setup li { padding-left: 4px; }
+.app-setup pre { margin: 12px 0; border-radius: 4px; }
+.app-setup code, .app-setup kbd { font-family: monospace; }
+.app-setup>p { max-width: 760px !important; }

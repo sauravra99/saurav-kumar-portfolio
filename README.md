@@ -39,3 +39,15 @@ Then visit http://localhost:8080. Clipboard access depends on browser permission
 ## Editing content
 
 Update career details, technical examples, education, and awards in [js/data.js](./js/data.js). Short project titles and role summaries live in [js/app.js](./js/app.js); introductory text and contact links live in [index.html](./index.html).
+
+## Portfolio with LinkLens
+
+The Selected Work section includes LinkLens with a **Try LinkLens** link. To run the portfolio and the working checker together:
+
+```sh
+ruby link-checker/server.rb
+```
+
+Open http://127.0.0.1:8081/ for the portfolio. The app is at http://127.0.0.1:8081/link-checker/public/ and includes a return link to the portfolio. The existing **Run LinkLens** VS Code task starts both.
+
+A static preview can display the portfolio and app interface, but cannot run link scans. Public deployment requires hosting the Ruby backend (or routing `/api/scan` to a deployed backend). No public deployment is configured by these local changes.

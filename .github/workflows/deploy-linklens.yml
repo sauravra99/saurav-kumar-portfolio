@@ -1,0 +1,103 @@
+name: Deploy LinkLens to Zoho
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: linklens-zoho-deployment
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      CATALYST_PROJECT_ID: ${{ vars.CATALYST_PROJECT_ID }}
+      CATALYST_ORG_ID: ${{ vars.CATALYST_ORG_ID }}
+      CATALYST_DC: ${{ vars.CATALYST_DC }}
+      APPSAIL_NAME: ${{ vars.APPSAIL_NAME || 'linklens' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Check deployment settings
+        env:
+          CATALYST_TOKEN: ${{ secrets.CATALYST_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for setting in CATALYST_TOKEN CATALYST_PROJECT_ID CATALYST_ORG_ID CATALYST_DC; do
+            if [ -z "${!setting}" ]; then
+              echo "::error::Missing $setting. Follow link-checker/DEPLOY-GITHUB.md."
+              exit 1
+            fi
+          done
+          case "$CATALYST_DC" in
+            us|eu|in|jp|sa|au|ca) ;;
+            *) echo '::error::CATALYST_DC must be us, eu, in, jp, sa, au, or ca.'; exit 1 ;;
+          esac
+          [[ "$APPSAIL_NAME" =~ ^[a-zA-Z][a-zA-Z0-9_-]*$ ]] || { echo '::error::Invalid APPSAIL_NAME'; exit 1; }
+
+      - name: Build Linux AMD64 container
+        run: docker build --platform linux/amd64 --file link-checker/Dockerfile --tag linklens:deploy .
+
+      - name: Run regression checks in container
+        run: |
+          docker run --rm --volume "$GITHUB_WORKSPACE/link-checker/test.rb:/app/link-checker/test.rb:ro" linklens:deploy ruby link-checker/test.rb
+          docker run --rm linklens:deploy ruby -c link-checker/server.rb
+
+      - name: Smoke-test container routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker run --detach --name linklens-check --publish 127.0.0.1:9000:9000 linklens:deploy
+          trap 'docker logs linklens-check; docker rm -f linklens-check' EXIT
+          curl --fail --retry 12 --retry-connrefused --retry-delay 2 http://127.0.0.1:9000/health
+          curl --fail --silent http://127.0.0.1:9000/link-checker/public/ | grep -q 'Page URL'
+          code=$(curl --silent --output /tmp/scan-response.json --write-out '%{http_code}' \
+            --header 'Content-Type: application/json' \
+            --data '{"url":"http://127.0.0.1/"}' http://127.0.0.1:9000/api/scan)
+          test "$code" = 400
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Catalyst CLI
+        run: npm install --global zcatalyst-cli
+
+      - name: Deploy container to AppSail
+        env:
+          CATALYST_TOKEN: ${{ secrets.CATALYST_TOKEN }}
+          CI: 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Minimal isolated project root for the standalone AppSail command.
+          # Project and organization are supplied explicitly; no app resources are initialized.
+          mkdir -p "$RUNNER_TEMP/linklens-catalyst"
+          cd "$RUNNER_TEMP/linklens-catalyst"
+          printf '{}\n' > catalyst.json
+          catalyst deploy appsail \
+            --name "$APPSAIL_NAME" \
+            --source docker://linklens:deploy \
+            --port 9000 \
+            --project "$CATALYST_PROJECT_ID" \
+            --org "$CATALYST_ORG_ID" \
+            --dc "$CATALYST_DC" \
+            --token "$CATALYST_TOKEN" < /dev/null
+
+      - name: Deployment follow-up
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" <<'SUMMARY'
+          ## LinkLens uploaded to Zoho AppSail
+          Find the app URL in the deployment step or the Catalyst console.
+          - Set `PUBLIC_ORIGIN` in AppSail to the exact HTTPS origin (no path).
+          - Confirm `/health` and `/link-checker/public/` work on the hosted app.
+          - Run a live scan before replacing the portfolio's localhost instructions.
+          - Confirm the Catalyst environment and complete Zoho's production publishing process if required. This workflow does not promote a project to production.
+          SUMMARY

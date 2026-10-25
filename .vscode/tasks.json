@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run LinkLens",
+			"type": "shell",
+			"command": "ruby",
+			"args": [
+				"link-checker/server.rb"
+			],
+			"isBackground": true,
+			"problemMatcher": []
+		}
+	]
+}
