@@ -40,6 +40,32 @@
 
     <section id="blueprints" class="section">
       <div class="section-heading"><div><p class="eyebrow">01 / Selected work</p><h2>From challenge to implementation.</h2></div><p>A closer look at the systems I build.<br>Expand a project for the approach and example code.</p></div>
+      <article id="linklens" class="featured-app" aria-labelledby="linklens-title">
+        <div>
+          <p class="eyebrow">Featured app / Web utility</p>
+          <h3 id="linklens-title">LinkLens <span>Broken-link checker</span></h3>
+          <p>Give your website a quick link-health check. Enter a page URL to find broken destinations, inspect redirects, and export a report of what needs attention.</p>
+          <p class="app-stack">Ruby · JavaScript · HTTP diagnostics</p>
+        </div>
+        <div class="app-launch">
+          <a class="button" href="#linklens-setup">Run locally <span aria-hidden="true">↓</span></a>
+          <p>Local preview available.<br>Online scanning coming later.</p>
+        </div>
+        <div id="linklens-setup" class="app-setup">
+          <h4>Try LinkLens on your computer</h4>
+          <p>Localhost refers to your own computer. Start the server there before opening the app; this portfolio cannot start it for you.</p>
+          <ol>
+            <li><a class="inline-link" href="https://github.com/sauravra99/saurav-kumar-portfolio" target="_blank" rel="noopener noreferrer">Download or clone the project from GitHub ↗</a>, then open a terminal in the downloaded project folder. Use the version that includes LinkLens.</li>
+            <li>Make sure Ruby is installed. If WEBrick is missing, run <code>gem install webrick</code>.</li>
+            <li>Start the server and keep the terminal open:
+              <pre tabindex="0" aria-label="Start LinkLens command"><code>ruby link-checker/server.rb</code></pre>
+            </li>
+            <li>Open the app using the button below. To stop the server later, press <kbd>Ctrl</kbd> + <kbd>C</kbd> in the terminal.</li>
+          </ol>
+          <a class="inline-link" href="http://127.0.0.1:8081/link-checker/public/" target="_blank" rel="noopener noreferrer">Open LinkLens on localhost ↗</a>
+          <p>If the page cannot be reached, check that the server is running on port 8081 on this computer.</p>
+        </div>
+      </article>
       <div id="work-list"></div>
       <details id="oak-sandbox" class="lab">
         <summary><span><span class="eyebrow">Interactive demo</span><strong>What changes when a query uses an index?</strong></span><span class="expand-icon" aria-hidden="true">+</span></summary>
