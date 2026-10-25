@@ -56,7 +56,7 @@ jobs:
           set -euo pipefail
           docker run --detach --name linklens-check --publish 127.0.0.1:9000:9000 linklens:deploy
           trap 'docker logs linklens-check; docker rm -f linklens-check' EXIT
-          curl --fail --retry 12 --retry-connrefused --retry-delay 2 http://127.0.0.1:9000/health
+          curl --fail --retry 12 --retry-all-errors --retry-delay 2 --max-time 5 http://127.0.0.1:9000/health
           curl --fail --silent http://127.0.0.1:9000/link-checker/public/ | grep -q 'Page URL'
           code=$(curl --silent --output /tmp/scan-response.json --write-out '%{http_code}' \
             --header 'Content-Type: application/json' \
