@@ -205,6 +205,8 @@ if $PROGRAM_NAME == __FILE__
     end
     authority = public_uri.host + (public_uri.port == 443 ? '' : ":#{public_uri.port}")
     allowed_hosts << authority
+    # HTTPS proxies may preserve the explicit default port in the Host header.
+    allowed_hosts << "#{public_uri.host}:443" if public_uri.port == 443
     allowed_origins << "https://#{authority}"
   end
   portfolio_root = File.expand_path('..', __dir__)
@@ -246,9 +248,6 @@ if $PROGRAM_NAME == __FILE__
       end
       res.body = JSON.generate(LinkChecker.scan(payload['url']))
     rescue LinkChecker::CheckError, JSON::ParserError => error
-      warn JSON.generate(event: 'scan_rejected', reason: error.message, host: req['host'], origin: req['origin'])
-      res['X-LinkLens-Error'] = "host:#{req['host']}" if error.message == 'Invalid request host.'
-      res['X-LinkLens-Error'] = 'origin' if error.message == 'Invalid request origin.'
       res.status = 400 if res.status == 200
       res.body = JSON.generate(error: error.message)
     rescue StandardError
