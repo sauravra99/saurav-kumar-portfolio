@@ -250,7 +250,9 @@ if $PROGRAM_NAME == __FILE__
     rescue LinkChecker::CheckError, JSON::ParserError => error
       res.status = 400 if res.status == 200
       res.body = JSON.generate(error: error.message)
-    rescue StandardError
+    rescue StandardError => error
+      warn JSON.generate(event: 'scan_failed', type: error.class.name, message: error.message, trace: error.backtrace.first(5))
+      res['X-LinkLens-Error'] = error.class.name
       res.status = 502
       res.body = JSON.generate(error: 'Could not load this page. Check the URL; the website may block automated requests or be unavailable.')
     ensure
