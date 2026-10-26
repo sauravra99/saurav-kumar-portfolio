@@ -49,6 +49,7 @@ jobs:
         run: |
           docker run --rm --volume "$GITHUB_WORKSPACE/link-checker/test.rb:/app/link-checker/test.rb:ro" linklens:deploy ruby link-checker/test.rb
           docker run --rm linklens:deploy ruby -c link-checker/server.rb
+          docker run --rm linklens:deploy ruby -r ./link-checker/server.rb -e 'puts JSON.generate(LinkChecker.scan("https://example.com"))'
 
       - name: Smoke-test container routes
         shell: bash
