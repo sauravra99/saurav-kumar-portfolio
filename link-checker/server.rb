@@ -3,7 +3,7 @@ require 'net/http'
 require 'uri'
 require 'json'
 require 'ipaddr'
-require 'resolv'
+require 'socket'
 require 'timeout'
 require 'cgi'
 require 'strscan'
@@ -24,7 +24,9 @@ module LinkChecker
     raise CheckError, 'This URL is not valid. Include https:// and a valid hostname.'
   end
   def self.public_address(host)
-    addresses = Timeout.timeout(4) { Resolv.getaddresses(host) }
+    # Use the platform resolver, which handles container DNS configuration and
+    # missing optional hosts files. Validate every result before choosing one.
+    addresses = Timeout.timeout(4) { Addrinfo.getaddrinfo(host, nil, nil, :STREAM).map(&:ip_address).uniq }
     raise CheckError, 'Hostname could not be resolved.' if addresses.empty?
     addresses.each do |address|
       ip = IPAddr.new(address)
@@ -32,7 +34,7 @@ module LinkChecker
       public_ip = ip.ipv4? ? BLOCKED.none? { |range| range.include?(ip) } : IPAddr.new('2000::/3').include?(ip) && !IPAddr.new('2001::/23').include?(ip) && !IPAddr.new('2002::/16').include?(ip) && !IPAddr.new('2001:db8::/32').include?(ip)
       raise CheckError, 'Private, local, and reserved network addresses are not checked.' unless public_ip
     end
-    addresses.first
+    addresses.find { |address| IPAddr.new(address).ipv4? } || addresses.first
   end
   def self.fetch(input, method: :get, read_body: false)
     url = normalize(input.to_s)
