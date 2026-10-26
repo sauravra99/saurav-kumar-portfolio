@@ -247,7 +247,7 @@ if $PROGRAM_NAME == __FILE__
       res.body = JSON.generate(LinkChecker.scan(payload['url']))
     rescue LinkChecker::CheckError, JSON::ParserError => error
       warn JSON.generate(event: 'scan_rejected', reason: error.message, host: req['host'], origin: req['origin'])
-      res['X-LinkLens-Error'] = 'host' if error.message == 'Invalid request host.'
+      res['X-LinkLens-Error'] = "host:#{req['host']}" if error.message == 'Invalid request host.'
       res['X-LinkLens-Error'] = 'origin' if error.message == 'Invalid request origin.'
       res.status = 400 if res.status == 200
       res.body = JSON.generate(error: error.message)
