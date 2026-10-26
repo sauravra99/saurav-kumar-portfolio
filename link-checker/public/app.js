@@ -53,7 +53,9 @@
     const timeout = setTimeout(() => controller.abort(), 85000);
     try {
       const response = await fetch('/api/scan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: input }), signal: controller.signal });
-      const data = await response.json();
+      const data = await response.json().catch(() => {
+        throw new Error(`The checker returned an invalid response (HTTP ${response.status}). Please try again shortly.`);
+      });
       if (!response.ok) throw new Error(data.error || 'The scan failed. Please try again.');
       report = data;
       filter = 'all';
@@ -73,7 +75,7 @@
       $('status').textContent = data.checked ? 'Scan complete. Your report is ready below.' : 'Scan complete. No checkable links were found in this page’s HTML.';
     } catch (error) {
       $('status').textContent = '';
-      $('error').textContent = error.name === 'AbortError' ? 'The scan timed out. Please try again shortly.' : (error instanceof SyntaxError || error instanceof TypeError ? 'Cannot reach the checker. Start the local server and open http://127.0.0.1:8081.' : error.message);
+      $('error').textContent = error.name === 'AbortError' ? 'The scan timed out. Please try again shortly.' : (error instanceof TypeError ? 'Cannot reach the checker. Check your connection and try again shortly.' : error.message);
       $('error').hidden = false;
     } finally {
       clearTimeout(timeout);
